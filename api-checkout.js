@@ -9,6 +9,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check if API key exists
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('ERROR: STRIPE_SECRET_KEY is not set in environment variables');
+    return res.status(500).json({ 
+      error: 'Server configuration error: Stripe API key not set. Check Vercel environment variables.' 
+    });
+  }
+
   try {
     const { lineItems } = req.body;
 
@@ -38,7 +46,7 @@ export default async function handler(req, res) {
     // Return the checkout URL
     res.status(200).json({ url: session.url });
   } catch (error) {
-    console.error('Stripe error:', error);
+    console.error('Stripe error:', error.message);
     res.status(500).json({ 
       error: error.message || 'Checkout failed' 
     });
