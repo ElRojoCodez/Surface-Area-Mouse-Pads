@@ -26,22 +26,27 @@ export default async function handler(req, res) {
     }
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: lineItems.map(item => ({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: item.name,
-          },
-          unit_amount: item.price, // Already in cents from frontend
-        },
-        quantity: item.quantity,
-      })),
-      mode: 'payment',
-      success_url: `${process.env.DOMAIN}/success.html`,
-      cancel_url: `${process.env.DOMAIN}/cancel.html`,
-    });
+const session = await stripe.checkout.sessions.create({
+  payment_method_types: ['card'],
+  line_items: lineItems.map(item => ({
+    price_data: {
+      currency: 'usd',
+      product_data: {
+        name: item.name,
+      },
+      unit_amount: item.price,
+    },
+    quantity: item.quantity,
+  })),
+  mode: 'payment',
+  success_url: `${process.env.DOMAIN}/success.html`,
+  cancel_url: `${process.env.DOMAIN}/cancel.html`,
+  
+  shipping_address_collection: {
+    allowed_countries: ['US'], 
+  },
+  collect_email: true,
+});
 
     // Return the checkout URL
     res.status(200).json({ url: session.url });
