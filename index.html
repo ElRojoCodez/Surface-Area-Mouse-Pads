@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -622,7 +622,13 @@
       }
 
       async function handleCheckout() {
-        const total = getCartTotal();
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const originalText = checkoutBtn.textContent;
+        
+        // Disable button and show loading state
+        checkoutBtn.disabled = true;
+        checkoutBtn.textContent = '⏳ Processing...';
+        
         const lineItems = cart.map(item => ({
           name: item.name,
           price: Math.round(item.price * 100), // Convert to cents
@@ -639,14 +645,18 @@
           });
 
           if (!response.ok) {
-            throw new Error('Checkout failed');
+            const error = await response.json();
+            throw new Error(error.error || 'Checkout failed');
           }
 
           const { url } = await response.json();
+          // Redirect to Stripe checkout
           window.location.href = url;
         } catch (error) {
-          console.error('Error:', error);
-          showToast('Checkout failed. Please try again.');
+          console.error('Checkout error:', error);
+          checkoutBtn.disabled = false;
+          checkoutBtn.textContent = originalText;
+          showToast('Checkout failed: ' + error.message);
         }
       }
 
