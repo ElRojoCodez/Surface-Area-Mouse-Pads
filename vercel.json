@@ -1,11 +1,6 @@
 {
   "buildCommand": "npm install",
-  "public": "public",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" }
-  ],
-  "env": {
-    "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "DOMAIN": "@domain"
-  }
+  ]
 }
