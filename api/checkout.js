@@ -45,7 +45,14 @@ const session = await stripe.checkout.sessions.create({
   shipping_address_collection: {
     allowed_countries: ['US'], 
   },
-
+ 
 });
 
- 
+    // Send the session URL back to the frontend
+    return res.status(200).json({ url: session.url });
+  } catch (error) {
+    console.error('Stripe error:', error);
+    return res.status(500).json({ error: error.message || 'Something went wrong creating the checkout session' });
+  }
+}
+
