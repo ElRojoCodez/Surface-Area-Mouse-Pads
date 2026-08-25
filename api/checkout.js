@@ -45,7 +45,7 @@ const session = await stripe.checkout.sessions.create({
   shipping_address_collection: {
     allowed_countries: ['US'], 
   },
-  collect_email: true,
+
 });
 
     // Return the checkout URL
